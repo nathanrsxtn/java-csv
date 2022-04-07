@@ -9,10 +9,17 @@ Documentation and GitHub repository are currently under development. A quick and
 public static class Entry {
   public Integer a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z;
 }
-public static void main(String[] args) throws IOException {  
+public static void main(String[] args) throws IOException {
+  // Create a Path for the CSV file
   Path input = new File("integers.csv").toPath();
+
+  // Construct a CSV reader for the Entry class
   CSV<Entry> csv = new CSV<>(Record::new);
+  // Read the CSV file contents and convert it to an Entry array
   Entry[] results = csv.read(input);
+ 
+  // Getting values from the read data
+  int value = results[2].b; //-1415125868
 }
 ...
 ```
