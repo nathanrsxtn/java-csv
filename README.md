@@ -14,7 +14,7 @@ public static void main(String[] args) throws IOException {
   Path input = new File("integers.csv").toPath();
 
   // Construct a CSV reader for the Entry class
-  CSV<Entry> csv = new CSV<>(Record::new);
+  CSV<Entry> csv = new CSV<>(Entry::new);
   // Read the CSV file contents and convert it to an Entry array
   Entry[] results = csv.read(input);
  
