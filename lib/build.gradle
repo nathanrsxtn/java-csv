@@ -27,24 +27,27 @@ java {
 tasks.named('jar') {
     manifest {
         attributes(
-            'Implementation-Title': project.name,
-            'Implementation-Version': project.version
+            'Implementation-Title': 'CSV',
+            'Implementation-Version': project.version,
+            'Package': 'dev.nathanrsxtn.data.csv',
+            'Created-By': 'nathanrsxtn'
         )
     }
 }
 
 publishing {
-  repositories {
-    maven {
-      name = "GitHubPackages"
-      url = "https://maven.pkg.github.com/nathanrsxtn/java-csv"
-      credentials {
-        username = System.getenv("GITHUB_ACTOR")
-        password = System.getenv("GITHUB_TOKEN")
-      }
+    repositories {
+        maven {
+            name = 'GitHubPackages'
+            url = 'https://maven.pkg.github.com/nathanrsxtn/java-csv'
+            credentials {
+                username = System.getenv('GITHUB_ACTOR')
+                password = System.getenv('GITHUB_TOKEN')
+            }
+        }
     }
     publications {
-        gpr(MavenPublication) {
+        library(MavenPublication) {
             groupId = 'dev.nathanrsxtn.data'
             artifactId = 'csv'
             pom {
@@ -62,5 +65,4 @@ publishing {
             from(components.java)
         }
     }
-  }
 }
