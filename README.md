@@ -105,3 +105,11 @@ public class Vehicle {
     public enum State { AK, AL, AP, AR, AZ, BC, CA, CO, CT, DC, DE, FL, GA, HI, ID, IL, IN, KS, KY, LA, MA, MD, MN, MO, MS, MT, NC, NE, NH, NJ, NV, NY, OH, OR, PA, SC, TX, UT, VA, WA, WY }
 }
 ```
+
+## To Do
+
+- [x] Switch to VarHandles
+- [x] Add unit testing
+- [ ] Implement propper error handling
+- [ ] Improve documentation
+- [ ] Re-implement custom header parsing
