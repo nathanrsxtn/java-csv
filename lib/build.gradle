@@ -37,7 +37,7 @@ publishing {
   repositories {
     maven {
       name = "GitHubPackages"
-      url = uri("https://maven.pkg.github.com/nathanrsxtn/java-csv")
+      url = "https://maven.pkg.github.com/nathanrsxtn/java-csv"
       credentials {
         username = System.getenv("GITHUB_ACTOR")
         password = System.getenv("GITHUB_TOKEN")
@@ -45,6 +45,20 @@ publishing {
     }
     publications {
         gpr(MavenPublication) {
+            groupId = 'dev.nathanrsxtn.data'
+            artifactId = 'csv'
+            pom {
+                name = 'Java CSV'
+                description = 'Fast, zero-dependency, declarative CSV file reader for Java. '
+                url = 'https://github.com/nathanrsxtn/java-csv'
+                developers {
+                    developer {
+                        id = 'nathanrsxtn'
+                        name = 'Nathan Sexton'
+                        email = 'developer@nathanrsxtn.dev'
+                    }
+                }
+            }
             from(components.java)
         }
     }
