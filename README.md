@@ -1,35 +1,107 @@
-# CSV
+# Java CSV
+
 Fast, zero-dependency, declarative CSV file reader for Java.
+
 ## Usage
-Documentation and GitHub repository are currently under development. A quick and dirty implementation example is as follows:
 
-`App.java`
-```java
-...
-public static class Entry {
-  public Integer a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z;
-}
-public static void main(String[] args) throws IOException {
-  // Create a Path for the CSV file
-  Path input = new File("integers.csv").toPath();
+Usage examples are using the [Electric Vehicle Population Data](https://catalog.data.gov/dataset/electric-vehicle-population-data) CSV data.
 
-  // Construct a CSV reader for the Entry class
-  CSV<Entry> csv = new CSV<>(Entry::new);
-  // Read the CSV file contents and convert it to an Entry array
-  Entry[] results = csv.read(input);
- 
-  // Getting values from the read data
-  int value = results[2].b; //-1415125868
-}
-...
-```
-`integers.csv`
+`Electric_Vehicle_Population_Data.csv`
+
 ```csv
-a           ,b           ,c           ,d           ,e           ,f           ,g           ,h           ,i           ,j           ,k           ,l           ,m           ,n           ,o           ,p           ,q           ,r           ,s           ,t           ,u           ,v           ,w           ,x           ,y           ,z
-757612172   ,1673182854  ,1595244839  ,-183598274  ,-1091347740 ,1503515412  ,            ,-139752583  ,-977753868  ,1943408568  ,-303925210  ,-1025415426 ,-570653406  ,390313186   ,            ,-1230375674 ,1257572239  ,            ,-1874131371 ,-1232503334 ,548021053   ,1542140936  ,-108723445  ,            ,-1934046042 ,
-1786788532  ,-1080811899 ,-832667733  ,-572711392  ,-1005470517 ,-1052691986 ,609595066   ,-1005093799 ,2126810425  ,-1352580377 ,106147409   ,1892362145  ,-1609718687 ,            ,-308054926  ,485163856   ,            ,-316087483  ,733623537   ,-2132551671 ,124409806   ,1815964056  ,            ,-2029373841 ,            ,62271763
-525622720   ,-1415125868 ,-1117757539 ,-1763872306 ,1293643618  ,1404575285  ,-692535770  ,941819225   ,-1498193329 ,1918845393  ,-1518770620 ,            ,176282469   ,-1474942414 ,            ,1204980421  ,645517677   ,117567453   ,1057003440  ,-2110578398 ,-421958411  ,749989321   ,533013364   ,-1989411581 ,-210473171  ,
+VIN (1-10) ,County ,City    ,State ,Postal Code ,Model Year ,Make    ,Model          ,Electric Vehicle Type                  ,Clean Alternative Fuel Vehicle (CAFV) Eligibility ,Electric Range ,Base MSRP ,Legislative District ,DOL Vehicle ID ,Vehicle Location                ,Electric Utility                              ,2020 Census Tract
+KM8K33AGXL ,King   ,Seattle ,WA    ,      98103 ,      2020 ,HYUNDAI ,KONA           ,Battery Electric Vehicle (BEV)         ,Clean Alternative Fuel Vehicle Eligible           ,           258 ,        0 ,                  43 ,     249675142 ,POINT (-122.34301 47.659185)    ,CITY OF SEATTLE - (WA)|CITY OF TACOMA - (WA)  ,      53033004800
+1C4RJYB61N ,King   ,Bothell ,WA    ,      98011 ,      2022 ,JEEP    ,GRAND CHEROKEE ,Plug-in Hybrid Electric Vehicle (PHEV) ,Not eligible due to low battery range             ,            25 ,        0 ,                   1 ,     233928502 ,POINT (-122.20578 47.762405)    ,PUGET SOUND ENERGY INC||CITY OF TACOMA - (WA) ,      53033021804
+1C4RJYD61P ,Yakima ,Yakima  ,WA    ,      98908 ,      2023 ,JEEP    ,GRAND CHEROKEE ,Plug-in Hybrid Electric Vehicle (PHEV) ,Not eligible due to low battery range             ,            25 ,        0 ,                  14 ,     229675939 ,POINT (-120.6027202 46.5965625) ,PACIFICORP                                    ,      53077002900
 ...
 ```
+`App.java`
 
-The CSV reader will automatically set the values of public fields in the objects created by the method passed to the CSV constructor. Any type with a static `valueOf(String)` method can be parsed from the CSV file.
+```java
+public class App {
+    /**
+     * Read the CSV file and return a list cars newer than 2022 (inclusive), ordered alphabetically by state.
+     */
+    public static List<Vehicle> getVehicles() throws IOException {
+        try (BufferedReader reader = Files.newBufferedReader(Path.of("Electric_Vehicle_Population_Data.csv"))) {
+            return new CSV<>(Vehicle::new).stream(reader)
+                .filter(vehicle -> vehicle.modelYear >= 2022)
+                .sorted(Comparator.comparing(vehicle -> vehicle.state))
+                .toList();
+        }
+    }
+
+    /**
+     * A commented version of App#getVehicles()
+     */
+    public static List<Vehicle> getVehiclesCommented() throws IOException {
+        // Use a try block to ensure reader is closed.
+        try (BufferedReader reader = Files.newBufferedReader(Path.of("Electric_Vehicle_Population_Data.csv"))) {
+    
+            // Create a CSV instance by providing the constructor for the record class.
+            CSV<Vehicle> csv = new CSV<>(Vehicle::new);
+    
+            // Create a stream of CSV records from the file.
+            // The records are not read from the file until a terminal stream operation is performed.
+            Stream<Vehicle> recordStream = csv.stream(reader);
+    
+            // Perform any necessary intermediary stream operations.
+    
+            // Filter out any vehicles older than 2022.
+            recordStream = recordStream.filter(vehicle -> vehicle.modelYear >= 2022);
+    
+            // Sort by vehicle electric range.
+            recordStream = recordStream.sorted(Comparator.comparing(vehicle -> vehicle.state));
+    
+            // Create a list from the record stream.
+            // Performing a terminal stream operation will read, parse, and close the CSV file.
+            List<Vehicle> vehicles = recordStream.toList();
+    
+            // Return the list of vehicles.
+            return vehicles;
+        }
+    }
+}
+```
+
+`Vehicle.java`
+
+```java
+/**
+ * A class representing a record from the CSV file.
+ * Columns from the CSV file are associated with the public non-final fields in the record class. Not all columns from the CSV need to be present in the record class.
+ * This class can be nested, but must remain accessible (public and static).
+ */
+public class Vehicle {
+    public int postalCode;
+    public int modelYear;
+    public String make;
+    public String model;
+    public int electricRange;
+    public Point vehicleLocation;
+    public State state;
+
+    /**
+     * A parameterless constructor for the CSV reader to create record objects with. This will be passed
+     * to the CSV constructor as a method reference.
+     */
+    public Vehicle() {
+    }
+
+    /**
+     * The CSV reader will attempt to parse objects by locating a static valueOf(String) function. The
+     * record keyword is used for brevity, classes are also supported.
+     */
+    public static record Point(double latitude, double longitude) {
+        public static Point valueOf(String s) {
+            String[] coordinates = s.substring(s.indexOf("(") + 1, s.indexOf(")")).split(" ");
+            return new Point(Double.parseDouble(coordinates[0]), Double.parseDouble(coordinates[1]));
+        }
+    }
+
+    /**
+     * Enums are supported automatically, as they inherit a static valueOf(String) function from java.lang.Enum.
+     */
+    public enum State { AK, AL, AP, AR, AZ, BC, CA, CO, CT, DC, DE, FL, GA, HI, ID, IL, IN, KS, KY, LA, MA, MD, MN, MO, MS, MT, NC, NE, NH, NJ, NV, NY, OH, OR, PA, SC, TX, UT, VA, WA, WY }
+}
+```
