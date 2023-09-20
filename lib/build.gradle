@@ -22,13 +22,6 @@ java {
         languageVersion = JavaLanguageVersion.of(19)
     }
     withSourcesJar()
-    modularity.inferModulePath = true
-}
-
-compileJava {
-    doFirst {
-        options.compilerArgs += ['--add-modules', 'jdk.unsupported']
-    }
 }
 
 tasks.named('jar') {
@@ -44,11 +37,16 @@ publishing {
   repositories {
     maven {
       name = "GitHubPackages"
-      url = "https://maven.pkg.github.com/nathanrsxtn/java-csv"
+      url = uri("https://maven.pkg.github.com/nathanrsxtn/java-csv")
       credentials {
         username = System.getenv("GITHUB_ACTOR")
         password = System.getenv("GITHUB_TOKEN")
       }
+    }
+    publications {
+        gpr(MavenPublication) {
+            from(components.java)
+        }
     }
   }
 }
