@@ -2,6 +2,14 @@
 
 Fast, zero-dependency, declarative CSV file reader for Java.
 
+## Features
+
+- Read CSV records directly into Java objects.
+- Automatic type parsing.
+- Returns records in a Stream.
+- Based on the RFC 4180 CSV format.
+- Support for quoted fields and escaped double quotes.
+
 ## Usage
 
 Usage examples are using the [Electric Vehicle Population Data](https://catalog.data.gov/dataset/electric-vehicle-population-data) CSV data.
@@ -110,6 +118,6 @@ public class Vehicle {
 
 - [x] Switch to VarHandles
 - [x] Add unit testing
-- [ ] Implement propper error handling
+- [ ] Implement proper error handling
 - [ ] Improve documentation
 - [ ] Re-implement custom header parsing

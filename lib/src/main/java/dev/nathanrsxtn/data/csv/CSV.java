@@ -58,17 +58,17 @@ public class CSV<R> {
     }
 
     private Setter<R> getParsingSetter(final Class<?> type, final VarHandle varHandle) {
-        if (type == boolean.class) return (final R obj, final String value) -> varHandle.set(obj, Boolean.parseBoolean(value));
-        if (type == byte.class) return (final R obj, final String value) -> varHandle.set(obj, Byte.parseByte(value));
-        if (type == short.class) return (final R obj, final String value) -> varHandle.set(obj, Short.parseShort(value));
-        if (type == char.class) return (final R obj, final String value) -> varHandle.set(obj, value.charAt(0));
-        if (type == int.class) return (final R obj, final String value) -> varHandle.set(obj, Integer.parseInt(value));
-        if (type == long.class) return (final R obj, final String value) -> varHandle.set(obj, Long.parseLong(value));
-        if (type == float.class) return (final R obj, final String value) -> varHandle.set(obj, Float.parseFloat(value));
-        if (type == double.class) return (final R obj, final String value) -> varHandle.set(obj, Double.parseDouble(value));
+        if (type == boolean.class) return (final R obj, final String value) -> varHandle.set(obj, !value.isEmpty() && Boolean.parseBoolean(value));
+        if (type == byte.class) return (final R obj, final String value) -> varHandle.set(obj, value.isEmpty() ? 0 : Byte.parseByte(value));
+        if (type == short.class) return (final R obj, final String value) -> varHandle.set(obj, value.isEmpty() ? 0 : Short.parseShort(value));
+        if (type == char.class) return (final R obj, final String value) -> varHandle.set(obj, value.isEmpty() ? 0 : value.charAt(0));
+        if (type == int.class) return (final R obj, final String value) -> varHandle.set(obj, value.isEmpty() ? 0 : Integer.parseInt(value));
+        if (type == long.class) return (final R obj, final String value) -> varHandle.set(obj, value.isEmpty() ? 0 : Long.parseLong(value));
+        if (type == float.class) return (final R obj, final String value) -> varHandle.set(obj, value.isEmpty() ? 0 : Float.parseFloat(value));
+        if (type == double.class) return (final R obj, final String value) -> varHandle.set(obj, value.isEmpty() ? 0 : Double.parseDouble(value));
         if (type == String.class || type.isAssignableFrom(String.class)) return varHandle::set;
         final MethodHandle parser = this.parserMethodHandlesByType.computeIfAbsent(type, CSV::getObjectParser);
-        return parser == null ? Setter.empty() : (final R obj, final String value) -> varHandle.set(obj, parser.invoke(value));
+        return parser == null ? Setter.empty() : (final R obj, final String value) -> varHandle.set(obj, value.isEmpty() ? null : parser.invoke(value));
     }
 
     @FunctionalInterface
@@ -189,7 +189,7 @@ public class CSV<R> {
                 } else field = unescapeQuotedField(field);
             }
             final Setter<R> setter = fieldParseSetters[i];
-            if (setter != null && !field.isEmpty()) setter.tryParseAndSet(recordObject, field);
+            if (setter != null) setter.tryParseAndSet(recordObject, field);
             tryFieldEndFromIndex = fieldBeginIndex = tryFieldEndIndex + 1;
             i++;
         }
