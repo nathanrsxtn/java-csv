@@ -24,6 +24,13 @@ java {
     withSourcesJar()
 }
 
+sourceSets {
+    example {
+        compileClasspath += sourceSets.main.runtimeClasspath
+        runtimeClasspath += sourceSets.main.runtimeClasspath
+    }
+}
+
 tasks.named('jar') {
     manifest {
         attributes(
