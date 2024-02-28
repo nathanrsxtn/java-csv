@@ -1,6 +1,6 @@
-# dev.nathanrsxtn.csv
+<h1 style="display: none">dev.nathanrsxtn.csv</h1>
 
-Fast, zero-dependency, declarative CSV file reader for Java.
+<p style="display: none">Fast, zero-dependency, declarative CSV file reader for Java.</p>
 
 ## Features
 
