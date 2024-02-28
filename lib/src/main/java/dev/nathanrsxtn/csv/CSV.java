@@ -1,4 +1,4 @@
-package dev.nathanrsxtn.data.csv;
+package dev.nathanrsxtn.csv;
 
 import java.io.BufferedReader;
 import java.io.Closeable;

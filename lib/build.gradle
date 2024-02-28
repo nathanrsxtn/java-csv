@@ -36,7 +36,7 @@ tasks.named('jar') {
         attributes(
             'Implementation-Title': 'CSV',
             'Implementation-Version': project.version,
-            'Package': 'dev.nathanrsxtn.data.csv',
+            'Package': 'dev.nathanrsxtn.csv',
             'Created-By': 'nathanrsxtn'
         )
     }
@@ -55,7 +55,7 @@ publishing {
     }
     publications {
         library(MavenPublication) {
-            groupId = 'dev.nathanrsxtn.data'
+            groupId = 'dev.nathanrsxtn'
             artifactId = 'csv'
             pom {
                 name = 'Java CSV'

@@ -1,4 +1,4 @@
-package dev.nathanrsxtn.data.csv;
+package dev.nathanrsxtn.csv;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;

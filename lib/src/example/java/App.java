@@ -5,7 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
 
-import dev.nathanrsxtn.data.csv.CSV;
+import dev.nathanrsxtn.csv.CSV;
 
 public class App {
     /**
